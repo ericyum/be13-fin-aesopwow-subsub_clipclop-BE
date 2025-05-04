@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/cohorts")
 @RequiredArgsConstructor
-public class AnalysisController {
+public class CohortSingleController {
 
     private final CohortAnalysisBehaviorPatternService cohortAnalysisBehaviorPatternService;
     private final CohortAnalysisInsightService cohortAnalysisInsightService;

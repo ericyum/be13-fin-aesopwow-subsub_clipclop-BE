@@ -1,7 +1,7 @@
-package com.aesopwow.subsubclipclop.domain.analysis.repository.cohortsingle;
+package com.aesopwow.subsubclipclop.domain.analysis.repository.cohortdouble;
 
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisUserDataRequestDto;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisUserDataResponseDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisUserDataRequestDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisUserDataResponseDto;
 import org.springframework.stereotype.Repository;
 
 import java.io.BufferedReader;
@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class CohortSingleAnalysisUserDataRepositoryImpl implements CohortSingleAnalysisUserDataRepository {
+public class CohortDoubleAnalysisUserDataRepositoryImpl implements CohortDoubleAnalysisUserDataRepository {
 
     @Override
-    public CohortSingleAnalysisUserDataResponseDto fetchUserData(CohortSingleAnalysisUserDataRequestDto requestDto) {
+    public CohortDoubleAnalysisUserDataResponseDto fetchUserData(CohortDoubleAnalysisUserDataRequestDto requestDto) {
         try {
-            InputStream stream = getClass().getClassLoader().getResourceAsStream("mock/single-user-data.csv");
-            if (stream == null) throw new IllegalArgumentException("single-user-data.csv 파일 없음");
+            InputStream stream = getClass().getClassLoader().getResourceAsStream("mock/double-user-data.csv");
+            if (stream == null) throw new IllegalArgumentException("double-user-data.csv 파일 없음");
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
             String[] headers = reader.readLine().split(","); // 전체 컬럼
@@ -38,7 +38,7 @@ public class CohortSingleAnalysisUserDataRepositoryImpl implements CohortSingleA
                 }
                 table.add(row);
             }
-            return new CohortSingleAnalysisUserDataResponseDto(table);
+            return new CohortDoubleAnalysisUserDataResponseDto(table);
 
         } catch (Exception e) {
             throw new RuntimeException("유저 데이터 로딩 실패", e);
