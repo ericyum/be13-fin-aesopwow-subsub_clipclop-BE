@@ -1,0 +1,16 @@
+package com.aesopwow.subsubclipclop.domain.analysis.service.cohortsingle;
+
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisInsightRequestDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisInsightResponseDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisRemainHeatmapResponseDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisUserDataRequestDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisUserDataResponseDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisVisualizationRequestDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisVisualizationResponseDto;
+
+public interface CohortSingleAnalysisService {
+    CohortSingleAnalysisInsightResponseDto fetchInsight(CohortSingleAnalysisInsightRequestDto requestDto);
+    CohortSingleAnalysisRemainHeatmapResponseDto fetchRemainHeatmap(String clusterType);
+    CohortSingleAnalysisVisualizationResponseDto fetchVisualization(CohortSingleAnalysisVisualizationRequestDto requestDto);
+    CohortSingleAnalysisUserDataResponseDto fetchUserData(CohortSingleAnalysisUserDataRequestDto requestDto);
+}

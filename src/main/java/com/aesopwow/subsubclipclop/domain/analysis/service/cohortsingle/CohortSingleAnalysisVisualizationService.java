@@ -1,8 +1,0 @@
-package com.aesopwow.subsubclipclop.domain.analysis.service.cohortsingle;
-
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisVisualizationRequestDto;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisVisualizationResponseDto;
-
-public interface CohortSingleAnalysisVisualizationService {
-    CohortSingleAnalysisVisualizationResponseDto fetchVisualization(CohortSingleAnalysisVisualizationRequestDto requestDto);
-}
