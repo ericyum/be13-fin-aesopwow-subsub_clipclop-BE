@@ -1,6 +1,7 @@
 package com.aesopwow.subsubclipclop.domain.analysis.repository;
 
 import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisInsightResponseDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisRemainHeatmapRequestDto;
 import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisRemainHeatmapResponseDto;
 import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisUserDataRequestDto;
 import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisUserDataResponseDto;
@@ -19,7 +20,7 @@ public interface AnalysisRepository {
     CohortSingleAnalysisUserDataResponseDto fetchSingleUserData(CohortSingleAnalysisUserDataRequestDto requestDto);
 
     CohortDoubleAnalysisInsightResponseDto fetchDoubleInsight(String clusterType);
-    CohortDoubleAnalysisRemainHeatmapResponseDto fetchDoubleRemainHeatmap(String clusterType);
+    CohortDoubleAnalysisRemainHeatmapResponseDto fetchDoubleRemainHeatmap(CohortDoubleAnalysisRemainHeatmapRequestDto requestDto);
     CohortDoubleAnalysisVisualizationResponseDto fetchDoubleVisualization(String clusterType);
     CohortDoubleAnalysisUserDataResponseDto fetchDoubleUserData(CohortDoubleAnalysisUserDataRequestDto requestDto);
 }

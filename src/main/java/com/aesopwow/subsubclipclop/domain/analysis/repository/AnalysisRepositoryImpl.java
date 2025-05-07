@@ -1,6 +1,7 @@
 package com.aesopwow.subsubclipclop.domain.analysis.repository;
 
 import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisInsightResponseDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisRemainHeatmapRequestDto;
 import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisRemainHeatmapResponseDto;
 import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisUserDataRequestDto;
 import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisUserDataResponseDto;
@@ -155,8 +156,7 @@ public class AnalysisRepositoryImpl implements AnalysisRepository {
         }
     }
 
-    @Override
-    public CohortDoubleAnalysisRemainHeatmapResponseDto fetchDoubleRemainHeatmap(String clusterType) {
+    public CohortDoubleAnalysisRemainHeatmapResponseDto fetchDoubleRemainHeatmap(CohortDoubleAnalysisRemainHeatmapRequestDto requestDto) {
         try (BufferedReader reader = getReader("mock/double-remain-heatmap.csv")) {
             String line;
             String title = "";
