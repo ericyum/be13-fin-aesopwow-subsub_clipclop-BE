@@ -10,5 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CohortDoubleAnalysisVisualizationRequestDto {
-    private String clusterType;
+    private String firstClusterType;
+    private String secondClusterType;
 }

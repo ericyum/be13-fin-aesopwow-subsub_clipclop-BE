@@ -29,36 +29,34 @@ public class AnalysisController {
     private final AnalysisService analysisService;
 
     @PostMapping("/cohort/{type}/remain-heatmap")
-    public ResponseEntity<?> fetchRemainHeatmap(
-            @PathVariable String type,
-            @RequestBody Map<String, Object> body
-    ) {
-        String clusterType = (String) body.get("clusterType");
-
+    public ResponseEntity<?> fetchRemainHeatmap(@PathVariable String type, @RequestBody Map<String, Object> body) {
         if ("single".equalsIgnoreCase(type)) {
+            String clusterType = (String) body.get("clusterType");
             CohortSingleAnalysisRemainHeatmapRequestDto requestDto =
                     new CohortSingleAnalysisRemainHeatmapRequestDto(clusterType);
             return ResponseEntity.ok(analysisService.fetchSingleRemainHeatmap(requestDto));
         } else if ("double".equalsIgnoreCase(type)) {
+            String firstClusterType = (String) body.get("firstClusterType");
+            String secondClusterType = (String) body.get("secondClusterType");
             CohortDoubleAnalysisRemainHeatmapRequestDto requestDto =
-                    new CohortDoubleAnalysisRemainHeatmapRequestDto(clusterType);
+                    new CohortDoubleAnalysisRemainHeatmapRequestDto(firstClusterType, secondClusterType);
             return ResponseEntity.ok(analysisService.fetchDoubleRemainHeatmap(requestDto));
         } else {
             return ResponseEntity.badRequest().body("Invalid type: must be 'single' or 'double'");
         }
     }
 
-
     @PostMapping("/cohort/{type}/visualization")
     public ResponseEntity<?> fetchVisualization(@PathVariable String type, @RequestBody Map<String, Object> body) {
-        String clusterType = (String) body.get("clusterType");
-
         if ("single".equalsIgnoreCase(type)) {
+            String clusterType = (String) body.get("clusterType");
             return ResponseEntity.ok(analysisService.fetchSingleVisualization(
                     new CohortSingleAnalysisVisualizationRequestDto(clusterType)));
         } else if ("double".equalsIgnoreCase(type)) {
+            String firstClusterType = (String) body.get("firstClusterType");
+            String secondClusterType = (String) body.get("secondClusterType");
             return ResponseEntity.ok(analysisService.fetchDoubleVisualization(
-                    new CohortDoubleAnalysisVisualizationRequestDto(clusterType)));
+                    new CohortDoubleAnalysisVisualizationRequestDto(firstClusterType, secondClusterType)));
         } else {
             return ResponseEntity.badRequest().body("Invalid type: must be 'single' or 'double'");
         }
@@ -66,14 +64,15 @@ public class AnalysisController {
 
     @PostMapping("/cohort/{type}/insight")
     public ResponseEntity<?> fetchInsight(@PathVariable String type, @RequestBody Map<String, Object> body) {
-        String clusterType = (String) body.get("clusterType");
-
         if ("single".equalsIgnoreCase(type)) {
+            String clusterType = (String) body.get("clusterType");
             return ResponseEntity.ok(analysisService.fetchSingleInsight(
                     new CohortSingleAnalysisInsightRequestDto(clusterType)));
         } else if ("double".equalsIgnoreCase(type)) {
+            String firstClusterType = (String) body.get("firstClusterType");
+            String secondClusterType = (String) body.get("secondClusterType");
             return ResponseEntity.ok(analysisService.fetchDoubleInsight(
-                    new CohortDoubleAnalysisInsightRequestDto(clusterType)));
+                    new CohortDoubleAnalysisInsightRequestDto(firstClusterType, secondClusterType)));
         } else {
             return ResponseEntity.badRequest().body("Invalid type: must be 'single' or 'double'");
         }

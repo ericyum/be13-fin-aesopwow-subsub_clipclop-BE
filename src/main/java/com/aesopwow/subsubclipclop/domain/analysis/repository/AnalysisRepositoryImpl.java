@@ -5,6 +5,7 @@ import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDouble
 import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisRemainHeatmapResponseDto;
 import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisUserDataRequestDto;
 import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisUserDataResponseDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisVisualizationRequestDto;
 import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisVisualizationResponseDto;
 import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisInsightResponseDto;
 import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisRemainHeatmapRequestDto;
@@ -146,7 +147,7 @@ public class AnalysisRepositoryImpl implements AnalysisRepository {
     // ========== DOUBLE ==========
 
     @Override
-    public CohortDoubleAnalysisInsightResponseDto fetchDoubleInsight(String clusterType) {
+    public CohortDoubleAnalysisInsightResponseDto fetchDoubleInsight(String firstClusterType, String secondClusterType) {
         try (BufferedReader reader = getReader("mock/double-insight.csv")) {
             reader.readLine();
             String[] parts = reader.readLine().split(",");
@@ -156,6 +157,7 @@ public class AnalysisRepositoryImpl implements AnalysisRepository {
         }
     }
 
+    @Override
     public CohortDoubleAnalysisRemainHeatmapResponseDto fetchDoubleRemainHeatmap(CohortDoubleAnalysisRemainHeatmapRequestDto requestDto) {
         try (BufferedReader reader = getReader("mock/double-remain-heatmap.csv")) {
             String line;
@@ -166,20 +168,14 @@ public class AnalysisRepositoryImpl implements AnalysisRepository {
 
             while ((line = reader.readLine()) != null) {
                 switch (line.trim()) {
-                    case "title":
-                        title = reader.readLine().trim();
-                        break;
-                    case "content":
-                        content = reader.readLine().trim();
-                        break;
-                    case "columns":
-                        columnLabels = Arrays.asList(reader.readLine().split(","));
-                        break;
-                    case "rows":
+                    case "title" -> title = reader.readLine().trim();
+                    case "content" -> content = reader.readLine().trim();
+                    case "columns" -> columnLabels = Arrays.asList(reader.readLine().split(","));
+                    case "rows" -> {
                         while ((line = reader.readLine()) != null) {
                             dataRows.add(Arrays.asList(line.split(",")));
                         }
-                        break;
+                    }
                 }
             }
 
@@ -190,7 +186,7 @@ public class AnalysisRepositoryImpl implements AnalysisRepository {
     }
 
     @Override
-    public CohortDoubleAnalysisVisualizationResponseDto fetchDoubleVisualization(String clusterType) {
+    public CohortDoubleAnalysisVisualizationResponseDto fetchDoubleVisualization(CohortDoubleAnalysisVisualizationRequestDto requestDto) {
         try (BufferedReader reader = getReader("mock/double-visualization.csv")) {
             reader.readLine();
             String[] parts = reader.readLine().split(",");
@@ -207,6 +203,7 @@ public class AnalysisRepositoryImpl implements AnalysisRepository {
             throw new RuntimeException("이중 시각화 분석 실패", e);
         }
     }
+
 
     @Override
     public CohortDoubleAnalysisUserDataResponseDto fetchDoubleUserData(CohortDoubleAnalysisUserDataRequestDto requestDto) {

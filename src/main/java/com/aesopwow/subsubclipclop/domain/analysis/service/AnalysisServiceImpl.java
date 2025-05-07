@@ -64,7 +64,7 @@ public class AnalysisServiceImpl implements AnalysisService {
                 .analysis(Analysis.builder().analysisNo(DOUBLE_ANALYSIS_NO).build())
                 .company(Company.builder().companyNo(FIXED_COMPANY_NO).build())
                 .build());
-        return repository.fetchDoubleInsight(requestDto.getClusterType());
+        return repository.fetchDoubleInsight(requestDto.getFirstClusterType(), requestDto.getSecondClusterType());
     }
 
     @Override
@@ -82,7 +82,7 @@ public class AnalysisServiceImpl implements AnalysisService {
                 .analysis(Analysis.builder().analysisNo(DOUBLE_ANALYSIS_NO).build())
                 .company(Company.builder().companyNo(FIXED_COMPANY_NO).build())
                 .build());
-        return repository.fetchDoubleVisualization(requestDto.getClusterType());
+        return repository.fetchDoubleVisualization(requestDto);
     }
 
     @Override

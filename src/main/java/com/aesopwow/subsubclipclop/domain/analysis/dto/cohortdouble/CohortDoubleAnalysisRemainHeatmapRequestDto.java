@@ -11,5 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CohortDoubleAnalysisRemainHeatmapRequestDto {
-    private String clusterType;
+    private String firstClusterType;
+    private String secondClusterType;
 }
