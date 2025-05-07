@@ -1,0 +1,16 @@
+package com.aesopwow.subsubclipclop.domain.analysis.service;
+
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.*;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.*;
+
+public interface AnalysisService {
+    CohortSingleAnalysisInsightResponseDto fetchSingleInsight(CohortSingleAnalysisInsightRequestDto requestDto);
+    CohortSingleAnalysisRemainHeatmapResponseDto fetchSingleRemainHeatmap(CohortSingleAnalysisRemainHeatmapRequestDto requestDto);
+    CohortSingleAnalysisVisualizationResponseDto fetchSingleVisualization(CohortSingleAnalysisVisualizationRequestDto requestDto);
+    CohortSingleAnalysisUserDataResponseDto fetchSingleUserData(CohortSingleAnalysisUserDataRequestDto requestDto);
+
+    CohortDoubleAnalysisInsightResponseDto fetchDoubleInsight(CohortDoubleAnalysisInsightRequestDto requestDto);
+    CohortDoubleAnalysisRemainHeatmapResponseDto fetchDoubleRemainHeatmap(CohortDoubleAnalysisRemainHeatmapRequestDto requestDto);
+    CohortDoubleAnalysisVisualizationResponseDto fetchDoubleVisualization(CohortDoubleAnalysisVisualizationRequestDto requestDto);
+    CohortDoubleAnalysisUserDataResponseDto fetchDoubleUserData(CohortDoubleAnalysisUserDataRequestDto requestDto);
+}

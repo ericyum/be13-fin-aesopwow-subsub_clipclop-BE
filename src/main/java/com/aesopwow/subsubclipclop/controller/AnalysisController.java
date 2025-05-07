@@ -1,123 +1,103 @@
 package com.aesopwow.subsubclipclop.controller;
 
-import com.aesopwow.subsubclipclop.domain.analysis.dto.behaviorpattern.*;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.insight.*;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.remainheatmap.*;
-
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.*;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.*;
-
-import com.aesopwow.subsubclipclop.domain.analysis.service.behaviorpattern.*;
-import com.aesopwow.subsubclipclop.domain.analysis.service.insight.*;
-import com.aesopwow.subsubclipclop.domain.analysis.service.remainheatmap.*;
-
-import com.aesopwow.subsubclipclop.domain.analysis.service.cohortsingle.*;
-import com.aesopwow.subsubclipclop.domain.analysis.service.cohortdouble.*;
-
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisInsightRequestDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisRemainHeatmapRequestDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisUserDataRequestDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisVisualizationRequestDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisInsightRequestDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisRemainHeatmapRequestDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisUserDataRequestDto;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisVisualizationRequestDto;
+import com.aesopwow.subsubclipclop.domain.analysis.service.AnalysisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
+
 
 @RestController
-@RequestMapping("/api/cohorts")
+@RequestMapping("/api/analysis")
 @RequiredArgsConstructor
 public class AnalysisController {
 
-    private final CohortAnalysisBehaviorPatternService cohortAnalysisBehaviorPatternService;
-    private final CohortAnalysisInsightService cohortAnalysisInsightService;
-    private final CohortAnalysisRemainHeatmapService cohortAnalysisRemainHeatmapService;
+    private final AnalysisService analysisService;
 
-    private final CohortSingleAnalysisService cohortSingleAnalysisService;
-
-    private final CohortDoubleAnalysisService cohortDoubleAnalysisService;
-
-
-    // ---------------- 기본 분석(삭제 예정) ----------------
-
-    @PostMapping("/behavior-pattern")
-    public CohortAnalysisBehaviorPatternResponseDto fetchBehaviorPattern(
-            @RequestBody CohortAnalysisBehaviorPatternRequestDto requestDto
+    @PostMapping("/cohort/{type}/remain-heatmap")
+    public ResponseEntity<?> fetchRemainHeatmap(
+            @PathVariable String type,
+            @RequestBody Map<String, Object> body
     ) {
-        return cohortAnalysisBehaviorPatternService.fetchBehaviorPattern(requestDto);
-    }
+        String clusterType = (String) body.get("clusterType");
 
-    @PostMapping("/insight")
-    public CohortAnalysisInsightResponseDto fetchInsight(
-            @RequestBody CohortAnalysisInsightRequestDto requestDto
-    ) {
-        return cohortAnalysisInsightService.fetchInsight(requestDto);
-    }
-
-    @PostMapping("/remain-heatmap")
-    public CohortAnalysisRemainHeatmapResponseDto fetchRemainHeatmap(
-            @RequestBody CohortAnalysisRemainHeatmapRequestDto requestDto
-    ) {
-        return cohortAnalysisRemainHeatmapService.fetchRemainHeatmap(requestDto);
-    }
-
-// ---------------- 단일 코호트 ----------------
-
-    @PostMapping("/single/remain-heatmap")
-    public ResponseEntity<CohortSingleAnalysisRemainHeatmapResponseDto> fetchSingleRemainHeatmap(
-            @RequestBody CohortSingleAnalysisRemainHeatmapRequestDto requestDto
-    ) {
-        return ResponseEntity.ok(
-                cohortSingleAnalysisService.fetchRemainHeatmap(requestDto.getClusterType())
-        );
-    }
-
-    @PostMapping("/single/visualization")
-    public ResponseEntity<CohortSingleAnalysisVisualizationResponseDto> fetchSingleVisualization(
-            @RequestBody CohortSingleAnalysisVisualizationRequestDto requestDto
-    ) {
-        return ResponseEntity.ok(cohortSingleAnalysisService.fetchVisualization(requestDto));
-    }
-
-    @PostMapping("/single/insight")
-    public ResponseEntity<CohortSingleAnalysisInsightResponseDto> fetchSingleInsight(
-            @RequestBody CohortSingleAnalysisInsightRequestDto requestDto
-    ) {
-        return ResponseEntity.ok(cohortSingleAnalysisService.fetchInsight(requestDto));
-    }
-
-    @PostMapping("/single/user-data")
-    public ResponseEntity<CohortSingleAnalysisUserDataResponseDto> fetchSingleUserData(
-            @RequestBody CohortSingleAnalysisUserDataRequestDto requestDto
-    ) {
-        return ResponseEntity.ok(cohortSingleAnalysisService.fetchUserData(requestDto));
+        if ("single".equalsIgnoreCase(type)) {
+            CohortSingleAnalysisRemainHeatmapRequestDto requestDto =
+                    new CohortSingleAnalysisRemainHeatmapRequestDto(clusterType);
+            return ResponseEntity.ok(analysisService.fetchSingleRemainHeatmap(requestDto));
+        } else if ("double".equalsIgnoreCase(type)) {
+            CohortDoubleAnalysisRemainHeatmapRequestDto requestDto =
+                    new CohortDoubleAnalysisRemainHeatmapRequestDto(clusterType);
+            return ResponseEntity.ok(analysisService.fetchDoubleRemainHeatmap(requestDto));
+        } else {
+            return ResponseEntity.badRequest().body("Invalid type: must be 'single' or 'double'");
+        }
     }
 
 
-// ---------------- 이중 코호트 ----------------
+    @PostMapping("/cohort/{type}/visualization")
+    public ResponseEntity<?> fetchVisualization(@PathVariable String type, @RequestBody Map<String, Object> body) {
+        String clusterType = (String) body.get("clusterType");
 
-    @PostMapping("/double/remain-heatmap")
-    public ResponseEntity<CohortDoubleAnalysisRemainHeatmapResponseDto> fetchDoubleRemainHeatmap(
-            @RequestBody CohortDoubleAnalysisRemainHeatmapRequestDto requestDto
-    ) {
-        return ResponseEntity.ok(
-                cohortDoubleAnalysisService.fetchRemainHeatmap(requestDto.getClusterType())
-        );
+        if ("single".equalsIgnoreCase(type)) {
+            return ResponseEntity.ok(analysisService.fetchSingleVisualization(
+                    new CohortSingleAnalysisVisualizationRequestDto(clusterType)));
+        } else if ("double".equalsIgnoreCase(type)) {
+            return ResponseEntity.ok(analysisService.fetchDoubleVisualization(
+                    new CohortDoubleAnalysisVisualizationRequestDto(clusterType)));
+        } else {
+            return ResponseEntity.badRequest().body("Invalid type: must be 'single' or 'double'");
+        }
     }
 
-    @PostMapping("/double/visualization")
-    public ResponseEntity<CohortDoubleAnalysisVisualizationResponseDto> fetchDoubleVisualization(
-            @RequestBody CohortDoubleAnalysisVisualizationRequestDto requestDto
-    ) {
-        return ResponseEntity.ok(cohortDoubleAnalysisService.fetchVisualization(requestDto));
+    @PostMapping("/cohort/{type}/insight")
+    public ResponseEntity<?> fetchInsight(@PathVariable String type, @RequestBody Map<String, Object> body) {
+        String clusterType = (String) body.get("clusterType");
+
+        if ("single".equalsIgnoreCase(type)) {
+            return ResponseEntity.ok(analysisService.fetchSingleInsight(
+                    new CohortSingleAnalysisInsightRequestDto(clusterType)));
+        } else if ("double".equalsIgnoreCase(type)) {
+            return ResponseEntity.ok(analysisService.fetchDoubleInsight(
+                    new CohortDoubleAnalysisInsightRequestDto(clusterType)));
+        } else {
+            return ResponseEntity.badRequest().body("Invalid type: must be 'single' or 'double'");
+        }
     }
 
-    @PostMapping("/double/insight")
-    public ResponseEntity<CohortDoubleAnalysisInsightResponseDto> fetchDoubleInsight(
-            @RequestBody CohortDoubleAnalysisInsightRequestDto requestDto
-    ) {
-        return ResponseEntity.ok(cohortDoubleAnalysisService.fetchInsight(requestDto));
-    }
-
-    @PostMapping("/double/user-data")
-    public ResponseEntity<CohortDoubleAnalysisUserDataResponseDto> fetchDoubleUserData(
-            @RequestBody CohortDoubleAnalysisUserDataRequestDto requestDto
-    ) {
-        return ResponseEntity.ok(cohortDoubleAnalysisService.fetchUserData(requestDto));
+    @PostMapping("/cohort/{type}/user-data")
+    public ResponseEntity<?> fetchUserData(@PathVariable String type, @RequestBody Map<String, Object> body) {
+        try {
+            if ("single".equalsIgnoreCase(type)) {
+                CohortSingleAnalysisUserDataRequestDto dto = new CohortSingleAnalysisUserDataRequestDto(
+                        (List<String>) body.get("fields")
+                );
+                return ResponseEntity.ok(analysisService.fetchSingleUserData(dto));
+            } else if ("double".equalsIgnoreCase(type)) {
+                CohortDoubleAnalysisUserDataRequestDto dto = new CohortDoubleAnalysisUserDataRequestDto(
+                        (List<String>) body.get("fields")
+                );
+                return ResponseEntity.ok(analysisService.fetchDoubleUserData(dto));
+            } else {
+                return ResponseEntity.badRequest().body("Invalid type: must be 'single' or 'double'");
+            }
+        } catch (ClassCastException e) {
+            return ResponseEntity.badRequest().body("Invalid request body format: " + e.getMessage());
+        }
     }
 
 }
