@@ -10,7 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CohortDoubleAnalysisVisualizationResponseDto {
-    private String title;
-    private String imageBase64A;  // 첫 번째 이미지
-    private String imageBase64B;  // 두 번째 이미지
+    private String firstImageBase64A;
+    private String firstImageBase64B;
+    private String secondImageBase64A;
+    private String secondImageBase64B;
 }

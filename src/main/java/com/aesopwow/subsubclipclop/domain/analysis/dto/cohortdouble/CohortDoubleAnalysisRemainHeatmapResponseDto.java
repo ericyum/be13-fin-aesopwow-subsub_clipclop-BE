@@ -12,8 +12,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CohortDoubleAnalysisRemainHeatmapResponseDto {
-    private String title;
-    private String content;
-    private List<String> columnLabels;
-    private List<List<String>> dataRows;
+    private String firstContent;
+    private List<String> firstColumnLabels;
+    private List<List<String>> firstDataRows;
+
+    private String secondContent;
+    private List<String> secondColumnLabels;
+    private List<List<String>> secondDataRows;
 }

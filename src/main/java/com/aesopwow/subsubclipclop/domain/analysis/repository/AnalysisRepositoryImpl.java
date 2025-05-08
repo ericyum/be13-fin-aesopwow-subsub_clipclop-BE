@@ -1,37 +1,14 @@
 package com.aesopwow.subsubclipclop.domain.analysis.repository;
 
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisInsightResponseDto;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisRemainHeatmapRequestDto;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisRemainHeatmapResponseDto;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisUserDataRequestDto;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisUserDataResponseDto;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisVisualizationRequestDto;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.CohortDoubleAnalysisVisualizationResponseDto;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisInsightResponseDto;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisRemainHeatmapRequestDto;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisRemainHeatmapResponseDto;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisUserDataRequestDto;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisUserDataResponseDto;
-import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.CohortSingleAnalysisVisualizationResponseDto;
-import com.aesopwow.subsubclipclop.entity.Analysis;
-import com.aesopwow.subsubclipclop.entity.Company;
-import com.aesopwow.subsubclipclop.entity.RequestList;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortdouble.*;
+import com.aesopwow.subsubclipclop.domain.analysis.dto.cohortsingle.*;
 import org.springframework.stereotype.Repository;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class AnalysisRepositoryImpl implements AnalysisRepository {
@@ -45,10 +22,10 @@ public class AnalysisRepositoryImpl implements AnalysisRepository {
             if (csvStream == null) throw new IllegalArgumentException("CSV 파일 없음");
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(csvStream));
-            reader.readLine(); // 헤더 skip
+            reader.readLine();
             String[] parts = reader.readLine().split(",");
 
-            return new CohortSingleAnalysisInsightResponseDto(parts[0].trim(), parts[1].trim());
+            return new CohortSingleAnalysisInsightResponseDto(parts[0].trim());
         } catch (Exception e) {
             throw new RuntimeException("단일 인사이트 분석 실패", e);
         }
@@ -62,16 +39,12 @@ public class AnalysisRepositoryImpl implements AnalysisRepository {
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(csvStream));
             String line;
-            String title = "";
             String content = "";
             List<String> columnLabels = new ArrayList<>();
             List<List<String>> dataRows = new ArrayList<>();
 
             while ((line = reader.readLine()) != null) {
                 switch (line.trim()) {
-                    case "title":
-                        title = reader.readLine().trim();
-                        break;
                     case "content":
                         content = reader.readLine().trim();
                         break;
@@ -86,7 +59,7 @@ public class AnalysisRepositoryImpl implements AnalysisRepository {
                 }
             }
 
-            return new CohortSingleAnalysisRemainHeatmapResponseDto(title, content, columnLabels, dataRows);
+            return new CohortSingleAnalysisRemainHeatmapResponseDto(content, columnLabels, dataRows);
         } catch (Exception e) {
             throw new RuntimeException("단일 히트맵 분석 실패", e);
         }
@@ -102,14 +75,13 @@ public class AnalysisRepositoryImpl implements AnalysisRepository {
             reader.readLine();
             String[] parts = reader.readLine().split(",");
 
-            String title = parts[0].trim();
-            String imageAPath = parts[1].trim();
-            String imageBPath = parts[2].trim();
+            String imageAPath = parts[0].trim();
+            String imageBPath = parts[1].trim();
 
             String base64A = encodeBase64(imageAPath);
             String base64B = encodeBase64(imageBPath);
 
-            return new CohortSingleAnalysisVisualizationResponseDto(title, base64A, base64B);
+            return new CohortSingleAnalysisVisualizationResponseDto(base64A, base64B);
         } catch (Exception e) {
             throw new RuntimeException("단일 시각화 분석 실패", e);
         }
@@ -161,25 +133,36 @@ public class AnalysisRepositoryImpl implements AnalysisRepository {
     public CohortDoubleAnalysisRemainHeatmapResponseDto fetchDoubleRemainHeatmap(CohortDoubleAnalysisRemainHeatmapRequestDto requestDto) {
         try (BufferedReader reader = getReader("mock/double-remain-heatmap.csv")) {
             String line;
-            String title = "";
-            String content = "";
-            List<String> columnLabels = new ArrayList<>();
-            List<List<String>> dataRows = new ArrayList<>();
+            String firstContent = "";
+            List<String> firstColumnLabels = new ArrayList<>();
+            List<List<String>> firstDataRows = new ArrayList<>();
+            String secondContent = "";
+            List<String> secondColumnLabels = new ArrayList<>();
+            List<List<String>> secondDataRows = new ArrayList<>();
 
             while ((line = reader.readLine()) != null) {
                 switch (line.trim()) {
-                    case "title" -> title = reader.readLine().trim();
-                    case "content" -> content = reader.readLine().trim();
-                    case "columns" -> columnLabels = Arrays.asList(reader.readLine().split(","));
-                    case "rows" -> {
+                    case "firstContent" -> firstContent = reader.readLine().trim();
+                    case "firstColumns" -> firstColumnLabels = Arrays.asList(reader.readLine().split(","));
+                    case "firstRows" -> {
+                        while ((line = reader.readLine()) != null && !line.equals("secondContent")) {
+                            firstDataRows.add(Arrays.asList(line.split(",")));
+                        }
+                    }
+                    case "secondContent" -> secondContent = reader.readLine().trim();
+                    case "secondColumns" -> secondColumnLabels = Arrays.asList(reader.readLine().split(","));
+                    case "secondRows" -> {
                         while ((line = reader.readLine()) != null) {
-                            dataRows.add(Arrays.asList(line.split(",")));
+                            secondDataRows.add(Arrays.asList(line.split(",")));
                         }
                     }
                 }
             }
 
-            return new CohortDoubleAnalysisRemainHeatmapResponseDto(title, content, columnLabels, dataRows);
+            return new CohortDoubleAnalysisRemainHeatmapResponseDto(
+                    firstContent, firstColumnLabels, firstDataRows,
+                    secondContent, secondColumnLabels, secondDataRows
+            );
         } catch (Exception e) {
             throw new RuntimeException("이중 히트맵 분석 실패", e);
         }
@@ -191,40 +174,53 @@ public class AnalysisRepositoryImpl implements AnalysisRepository {
             reader.readLine();
             String[] parts = reader.readLine().split(",");
 
-            String title = parts[0].trim();
-            String imageAPath = parts[1].trim();
-            String imageBPath = parts[2].trim();
+            String firstImageBase64A = encodeBase64(parts[0].trim());
+            String firstImageBase64B = encodeBase64(parts[1].trim());
+            String secondImageBase64A = encodeBase64(parts[2].trim());
+            String secondImageBase64B = encodeBase64(parts[3].trim());
 
-            String base64A = encodeBase64(imageAPath);
-            String base64B = encodeBase64(imageBPath);
-
-            return new CohortDoubleAnalysisVisualizationResponseDto(title, base64A, base64B);
+            return new CohortDoubleAnalysisVisualizationResponseDto(
+                    firstImageBase64A,
+                    firstImageBase64B,
+                    secondImageBase64A,
+                    secondImageBase64B
+            );
         } catch (Exception e) {
             throw new RuntimeException("이중 시각화 분석 실패", e);
         }
     }
 
-
     @Override
     public CohortDoubleAnalysisUserDataResponseDto fetchDoubleUserData(CohortDoubleAnalysisUserDataRequestDto requestDto) {
         try (BufferedReader reader = getReader("mock/double-user-data.csv")) {
             String[] headers = reader.readLine().split(",");
-            List<Map<String, String>> table = new ArrayList<>();
+            List<Map<String, String>> firstTable = new ArrayList<>();
+            List<Map<String, String>> secondTable = new ArrayList<>();
             String line;
+            boolean readingFirst = true;
 
             while ((line = reader.readLine()) != null) {
+                if (line.trim().equals("---")) {
+                    readingFirst = false;
+                    continue;
+                }
                 String[] values = line.split(",");
                 Map<String, String> row = new LinkedHashMap<>();
-
                 for (int i = 0; i < headers.length; i++) {
-                    if (requestDto.getFields().contains(headers[i].trim())) {
+                    if (readingFirst && requestDto.getFields().contains(headers[i].trim())) {
+                        row.put(headers[i].trim(), values[i].trim());
+                    } else if (!readingFirst && requestDto.getFields().contains(headers[i].trim())) {
                         row.put(headers[i].trim(), values[i].trim());
                     }
                 }
-                table.add(row);
+                if (readingFirst) {
+                    firstTable.add(row);
+                } else {
+                    secondTable.add(row);
+                }
             }
 
-            return new CohortDoubleAnalysisUserDataResponseDto(table);
+            return new CohortDoubleAnalysisUserDataResponseDto(firstTable, secondTable);
         } catch (Exception e) {
             throw new RuntimeException("이중 유저 데이터 로딩 실패", e);
         }

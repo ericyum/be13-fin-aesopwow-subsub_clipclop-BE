@@ -12,5 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CohortSingleAnalysisUserDataRequestDto {
-    private List<String> fields; // [나이, 국가 등등]
+    private String clusterType;
+    private List<String> fields;
 }

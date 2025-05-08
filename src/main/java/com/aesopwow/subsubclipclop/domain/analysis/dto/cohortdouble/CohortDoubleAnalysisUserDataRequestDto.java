@@ -12,5 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CohortDoubleAnalysisUserDataRequestDto {
-    private List<String> fields; // [나이, 국가 등등]
+    private String firstClusterType;
+    private String secondClusterType;
+    private List<String> fields;
 }

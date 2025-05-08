@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CohortDoubleAnalysisInsightResponseDto {
-    private String title;
-    private String content;
+    private String firstContent;
+    private String secondContent;
 }

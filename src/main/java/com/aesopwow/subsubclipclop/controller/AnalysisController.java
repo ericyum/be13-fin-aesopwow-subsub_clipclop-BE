@@ -82,18 +82,28 @@ public class AnalysisController {
     public ResponseEntity<?> fetchUserData(@PathVariable String type, @RequestBody Map<String, Object> body) {
         try {
             if ("single".equalsIgnoreCase(type)) {
-                CohortSingleAnalysisUserDataRequestDto dto = new CohortSingleAnalysisUserDataRequestDto(
-                        (List<String>) body.get("fields")
-                );
+                String clusterType = (String) body.get("clusterType");
+                List<String> fields = (List<String>) body.get("fields");
+
+                CohortSingleAnalysisUserDataRequestDto dto =
+                        new CohortSingleAnalysisUserDataRequestDto(clusterType, fields);
+
                 return ResponseEntity.ok(analysisService.fetchSingleUserData(dto));
+
             } else if ("double".equalsIgnoreCase(type)) {
-                CohortDoubleAnalysisUserDataRequestDto dto = new CohortDoubleAnalysisUserDataRequestDto(
-                        (List<String>) body.get("fields")
-                );
+                String firstClusterType = (String) body.get("firstClusterType");
+                String secondClusterType = (String) body.get("secondClusterType");
+                List<String> firstFields = (List<String>) body.get("firstFields");
+
+                CohortDoubleAnalysisUserDataRequestDto dto =
+                        new CohortDoubleAnalysisUserDataRequestDto(firstClusterType, secondClusterType, firstFields);
+
                 return ResponseEntity.ok(analysisService.fetchDoubleUserData(dto));
+
             } else {
                 return ResponseEntity.badRequest().body("Invalid type: must be 'single' or 'double'");
             }
+
         } catch (ClassCastException e) {
             return ResponseEntity.badRequest().body("Invalid request body format: " + e.getMessage());
         }

@@ -13,5 +13,6 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CohortDoubleAnalysisUserDataResponseDto {
-    private List<Map<String, String>> tableData; // 각 유저 행 = 필드-값 map
+    private List<Map<String, String>> firstTableData; // 각 유저 행 = 필드-값 map
+    private List<Map<String, String>> secondTableData;
 }

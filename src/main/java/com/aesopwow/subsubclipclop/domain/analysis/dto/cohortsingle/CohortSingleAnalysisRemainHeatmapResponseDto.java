@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CohortSingleAnalysisRemainHeatmapResponseDto {
-    private String title;
     private String content;
     private List<String> columnLabels;
     private List<List<String>> dataRows;
