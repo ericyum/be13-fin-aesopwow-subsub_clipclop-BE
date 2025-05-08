@@ -6,6 +6,7 @@ import com.aesopwow.subsubclipclop.domain.analysis.repository.RequestListJpaRepo
 import com.aesopwow.subsubclipclop.domain.analysis.repository.AnalysisRepository;
 import com.aesopwow.subsubclipclop.entity.Analysis;
 import com.aesopwow.subsubclipclop.entity.Company;
+import com.aesopwow.subsubclipclop.entity.DbInfo;
 import com.aesopwow.subsubclipclop.entity.RequestList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,12 +22,14 @@ public class AnalysisServiceImpl implements AnalysisService {
     private static final Long FIXED_COMPANY_NO = 1L;
     private static final Byte SINGLE_ANALYSIS_NO = 1;
     private static final Byte DOUBLE_ANALYSIS_NO = 2;
+    private static final Long FIXED_DB_NO = 1L;
 
     @Override
     public CohortSingleAnalysisInsightResponseDto fetchSingleInsight(CohortSingleAnalysisInsightRequestDto requestDto) {
         jpaRepository.save(RequestList.builder()
                 .analysis(Analysis.builder().analysisNo(SINGLE_ANALYSIS_NO).build())
                 .company(Company.builder().companyNo(FIXED_COMPANY_NO).build())
+                .dbInfo(DbInfo.builder().dbInfoNo(FIXED_DB_NO).build())
                 .build());
         return repository.fetchSingleInsight(requestDto.getClusterType());
     }
@@ -36,6 +39,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         jpaRepository.save(RequestList.builder()
                 .analysis(Analysis.builder().analysisNo(SINGLE_ANALYSIS_NO).build())
                 .company(Company.builder().companyNo(FIXED_COMPANY_NO).build())
+                .dbInfo(DbInfo.builder().dbInfoNo(FIXED_DB_NO).build())
                 .build());
         return repository.fetchSingleRemainHeatmap(requestDto);
     }
@@ -45,6 +49,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         jpaRepository.save(RequestList.builder()
                 .analysis(Analysis.builder().analysisNo(SINGLE_ANALYSIS_NO).build())
                 .company(Company.builder().companyNo(FIXED_COMPANY_NO).build())
+                .dbInfo(DbInfo.builder().dbInfoNo(FIXED_DB_NO).build())
                 .build());
         return repository.fetchSingleVisualization(requestDto.getClusterType());
     }
@@ -54,6 +59,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         jpaRepository.save(RequestList.builder()
                 .analysis(Analysis.builder().analysisNo(SINGLE_ANALYSIS_NO).build())
                 .company(Company.builder().companyNo(FIXED_COMPANY_NO).build())
+                .dbInfo(DbInfo.builder().dbInfoNo(FIXED_DB_NO).build())
                 .build());
         return repository.fetchSingleUserData(requestDto);
     }
@@ -63,6 +69,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         jpaRepository.save(RequestList.builder()
                 .analysis(Analysis.builder().analysisNo(DOUBLE_ANALYSIS_NO).build())
                 .company(Company.builder().companyNo(FIXED_COMPANY_NO).build())
+                .dbInfo(DbInfo.builder().dbInfoNo(FIXED_DB_NO).build())
                 .build());
         return repository.fetchDoubleInsight(requestDto.getFirstClusterType(), requestDto.getSecondClusterType());
     }
@@ -72,6 +79,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         jpaRepository.save(RequestList.builder()
                 .analysis(Analysis.builder().analysisNo(DOUBLE_ANALYSIS_NO).build())
                 .company(Company.builder().companyNo(FIXED_COMPANY_NO).build())
+                .dbInfo(DbInfo.builder().dbInfoNo(FIXED_DB_NO).build())
                 .build());
         return repository.fetchDoubleRemainHeatmap(requestDto);
     }
@@ -81,6 +89,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         jpaRepository.save(RequestList.builder()
                 .analysis(Analysis.builder().analysisNo(DOUBLE_ANALYSIS_NO).build())
                 .company(Company.builder().companyNo(FIXED_COMPANY_NO).build())
+                .dbInfo(DbInfo.builder().dbInfoNo(FIXED_DB_NO).build())
                 .build());
         return repository.fetchDoubleVisualization(requestDto);
     }
@@ -90,6 +99,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         jpaRepository.save(RequestList.builder()
                 .analysis(Analysis.builder().analysisNo(DOUBLE_ANALYSIS_NO).build())
                 .company(Company.builder().companyNo(FIXED_COMPANY_NO).build())
+                .dbInfo(DbInfo.builder().dbInfoNo(FIXED_DB_NO).build())
                 .build());
         return repository.fetchDoubleUserData(requestDto);
     }
