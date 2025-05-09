@@ -170,20 +170,38 @@ public class AnalysisRepositoryImpl implements AnalysisRepository {
             String line;
             boolean readingFirst = true;
 
+            List<String> fields = Optional.ofNullable(requestDto.getFields()).orElse(Collections.emptyList());
+
             while ((line = reader.readLine()) != null) {
                 if (line.trim().equals("---")) {
                     readingFirst = false;
                     continue;
                 }
-                String[] values = line.split(",");
+
+                String[] values = line.split(",", -1); // 빈 값 포함 split
+                if (values.length != headers.length) {
+                    System.out.println("⚠️ 값 개수가 헤더와 다릅니다: " + Arrays.toString(values));
+                    continue;
+                }
+
                 Map<String, String> row = new LinkedHashMap<>();
                 for (int i = 0; i < headers.length; i++) {
-                    if (requestDto.getFields().contains(headers[i].trim())) {
-                        row.put(headers[i].trim(), values[i].trim());
+                    String header = headers[i].trim();
+                    String value = values[i].trim();
+
+                    // field 비교 시 공백 제거 및 대소문자 무시
+                    boolean matches = fields.stream()
+                            .anyMatch(f -> f.trim().equalsIgnoreCase(header));
+
+                    if (matches) {
+                        row.put(header, value);
                     }
                 }
-                if (readingFirst) firstTable.add(row);
-                else secondTable.add(row);
+
+                if (!row.isEmpty()) {
+                    if (readingFirst) firstTable.add(row);
+                    else secondTable.add(row);
+                }
             }
 
             return new CohortDoubleAnalysisUserDataResponseDto(firstTable, secondTable);

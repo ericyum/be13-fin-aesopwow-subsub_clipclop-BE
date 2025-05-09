@@ -99,10 +99,12 @@ public class AnalysisController {
             } else if ("double".equalsIgnoreCase(type)) {
                 String firstClusterType = (String) body.get("firstClusterType");
                 String secondClusterType = (String) body.get("secondClusterType");
-                List<String> firstFields = (List<String>) body.get("firstFields");
+
+                // ✅ 수정된 부분: "fields"로 key 통일
+                List<String> fields = (List<String>) body.get("fields");
 
                 CohortDoubleAnalysisUserDataRequestDto dto =
-                        new CohortDoubleAnalysisUserDataRequestDto(firstClusterType, secondClusterType, firstFields);
+                        new CohortDoubleAnalysisUserDataRequestDto(firstClusterType, secondClusterType, fields);
 
                 return ResponseEntity.ok(analysisService.fetchDoubleUserData(dto));
 
