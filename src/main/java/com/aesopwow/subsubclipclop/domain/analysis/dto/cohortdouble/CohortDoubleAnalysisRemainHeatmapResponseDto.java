@@ -13,10 +13,10 @@ import java.util.List;
 @AllArgsConstructor
 public class CohortDoubleAnalysisRemainHeatmapResponseDto {
     private String firstContent;
-    private List<String> firstColumnLabels;
-    private List<List<String>> firstDataRows;
+    private List<String> firstColumnLabels; // ["USERS", "DAY 0", ...]
+    private List<List<String>> firstDataRows; // [["2024-04-01", "10989", "100.0", ...], ...]
 
     private String secondContent;
-    private List<String> secondColumnLabels;
-    private List<List<String>> secondDataRows;
+    private List<String> secondColumnLabels; // ["USERS", "DAY 0", ...]
+    private List<List<String>> secondDataRows; // [["2024-04-01", "11234", "100.0", ...], ...]
 }
