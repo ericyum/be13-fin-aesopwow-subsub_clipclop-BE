@@ -1,55 +1,26 @@
 #!/bin/bash
 
-echo "Start deployment script..."
+#set -e
+chmod u+w /home/ec2-user/app
 
-APP_DIR=/home/ec2-user/app
-BUILD_DIR=$APP_DIR/build/libs
-SCRIPTS_DIR=$APP_DIR/scripts
-DEPLOY_LOG=$APP_DIR/deploy.log
-APP_LOG=$APP_DIR/app.log
-
-TIME_NOW=$(date '+%Y-%m-%d %H:%M:%S')
-
-if [ ! -f "$SCRIPTS_DIR/sha.txt" ]; then
-  echo "$TIME_NOW > ERROR: $SCRIPTS_DIR/sha.txt 파일이 없습니다." >> $DEPLOY_LOG
-  exit 1
+# 환경 변수 적용
+if [ -f "/home/ec2-user/app/.env" ]; then
+  export $(grep -v '^#' /home/ec2-user/app/.env | xargs)
 fi
 
-SHA=$(cat $SCRIPTS_DIR/sha.txt)
-ZIP_NAME="${SHA}.zip"
+#  기본 경로 설정
 JAR_NAME="subsubclipclop-0.0.1-SNAPSHOT.jar"
-JAR_PATH="$BUILD_DIR/$JAR_NAME"
+JAR_PATH="/home/ec2-user/app/build/libs/subsubclipclop-0.0.1-SNAPSHOT.jar"
+APP_LOG="/home/ec2-user/app/app.log"
 
-mkdir -p "$BUILD_DIR"
-
-echo "$TIME_NOW > Downloading $ZIP_NAME from S3" >> $DEPLOY_LOG
-aws s3 cp s3://aesop-be/$ZIP_NAME $BUILD_DIR/$ZIP_NAME >> $DEPLOY_LOG 2>&1
-if [ $? -ne 0 ]; then
-  echo "$TIME_NOW > Failed to download ZIP file from S3" >> $DEPLOY_LOG
-  exit 1
+# 1. 기존 gunicorn 프로세스 종료
+PID=$(pgrep -f "$JAR_NAME")
+if [ -n "${PID:-}" ]; then
+  echo "기존 gunicorn 프로세스 종료: $PID"
+  kill -9 $PID
+  sleep 2
 fi
 
-echo "$TIME_NOW > Unzipping $ZIP_NAME" >> $DEPLOY_LOG
-unzip -o $BUILD_DIR/$ZIP_NAME -d $BUILD_DIR >> $DEPLOY_LOG 2>&1
-if [ $? -ne 0 ]; then
-  echo "$TIME_NOW > Failed to unzip file" >> $DEPLOY_LOG
-  exit 1
-fi
-
-EXISTING_PID=$(pgrep -f "$JAR_NAME")
-if [ -n "$EXISTING_PID" ]; then
-  echo "$TIME_NOW > Stopping existing process (PID: $EXISTING_PID)" >> $DEPLOY_LOG
-  kill $EXISTING_PID
-  sleep 5
-  if ps -p $EXISTING_PID > /dev/null; then
-    echo "$TIME_NOW > Force killing process (PID: $EXISTING_PID)" >> $DEPLOY_LOG
-    kill -9 $EXISTING_PID
-  fi
-fi
-
-echo "$TIME_NOW > Starting JAR file" >> $DEPLOY_LOG
-nohup java -jar "$JAR_PATH" --spring.profiles.active=prod >> $APP_LOG 2>&1 &
-disown
-
-NEW_PID=$!
-echo "$TIME_NOW > New process started (PID: $NEW_PID)" >> $DEPLOY_LOG
+# 새 애플리케이션 실행 (백그라운드)
+nohup java -jar "$JAR_PATH" --spring.profiles.active=prod >> "$APP_LOG" 2>&1 &
+disown  # 부모 프로세스 종료되어도 계속 실행되도록
